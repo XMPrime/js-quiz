@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { fetchQuizQuestions, Difficulty, QuestionState } from "./API";
 import QuestionCard from "./components/QuestionCard";
 import { GlobalStyle, Wrapper } from "./App.styles";
+import { questionRandomizer } from "./utils";
 
 const axios = require("axios");
 
@@ -12,33 +13,59 @@ export type AnswerObject = {
   correctAnswer: string;
 };
 
+export type QuestionObject = {
+  category: string;
+  correct_answer: string;
+  difficulty: string;
+  incorrect_answers: string[];
+  question: string;
+  type: string;
+};
+
 const TOTAL_QUESTIONS = 10;
 
 function App() {
   const [loading, setLoading] = useState(false);
-  const [questions, setQuestions] = useState<QuestionState[]>([]);
+  // const [questions, setQuestions] = useState<QuestionState[]>([]);
   const [questionNum, setQuestionNum] = useState(0);
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
+
+  //Questions, Choices, Answers, Answer Details
+  const [questions, setQuestions] = useState([]);
+  const [choiceSets, setChoiceSets] = useState([]);
+  const [answers, setAnswers] = useState([]);
+  const [answerDetailSets, setAnswerDetailSets] = useState([]);
+
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(true);
 
-  const loadQuestions = async () => {
-    const res = await fetch("http://localhost:4000/quiz-questions")
-      .then((response) => response.json())
-      .then((data) => console.log(data));
-    const quizQuestions = res;
-  };
+  const loadQuizData = async (size: number) => {
+    const data = await (
+      await fetch("http://localhost:4000/quiz-questions")
+    ).json();
+    console.log(data);
+    // const randomNumbers = questionRandomizer(size);
+    // console.log(randomNumbers);
 
-  loadQuestions();
+    setQuestions(data.questions);
+    setChoiceSets(data.choiceSets);
+    setAnswers(data.Answers);
+    setAnswerDetailSets(data.answerDetailSets);
+
+    return data.results.map((question: QuestionObject) => {});
+  };
 
   const startTrivia = async () => {
     setLoading(true);
     setGameOver(false);
 
+    // const newQuestions = await loadQuestions(TOTAL_QUESTIONS);
     const newQuestions = await fetchQuizQuestions(
       TOTAL_QUESTIONS,
       Difficulty.EASY
     );
+
+    loadQuizData(TOTAL_QUESTIONS);
 
     // try {
     //   const res = await axios.get("http://localhost:4000/quiz-questions");
