@@ -29,6 +29,7 @@ const QuestionCard: React.FC<QuestionProps> = ({
   questionNum,
   totalQuestions,
 }) => {
+  console.log(userAnswer);
   return (
     <Wrapper>
       <div className='question-card'>
@@ -58,7 +59,11 @@ const QuestionCard: React.FC<QuestionProps> = ({
             </ButtonWrapper>
           ))}
         </div>
-        <button className='reveal-answer' onClick={toggleShowAnswer}>
+        <button
+          className='reveal-answer'
+          onClick={toggleShowAnswer}
+          value='wrong'
+        >
           Reveal Answer{" "}
           <i className={`fas fa-play ${showAnswer && "rotate"}`}></i>
         </button>

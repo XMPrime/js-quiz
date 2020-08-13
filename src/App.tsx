@@ -1,10 +1,7 @@
-import React, { useState } from "react";
-import { fetchQuizQuestions, Difficulty, QuestionState } from "./API";
+import React, { useState, useEffect } from "react";
 import QuestionCard from "./components/QuestionCard";
 import { GlobalStyle, Wrapper } from "./App.styles";
 import { randomNumGen } from "./utils";
-
-const axios = require("axios");
 
 export type AnswerObject = {
   question: string;
@@ -29,14 +26,12 @@ function App() {
   const [questionNum, setQuestionNum] = useState(0);
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
   const [showAnswer, setShowAnswer] = useState(false);
-  // //Questions, Choices, Answers, Answer Details
-  // const [questions, setQuestions] = useState([]);
-  // const [choiceSets, setChoiceSets] = useState([]);
-  // const [answers, setAnswers] = useState([]);
-  // const [answerDetailSets, setAnswerDetailSets] = useState([]);
-
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(true);
+
+  useEffect(() => {
+    window.scrollTo(0, document.body.scrollHeight);
+  }, [showAnswer]);
 
   const generateQuestions = async (size: number) => {
     const {
@@ -78,7 +73,6 @@ function App() {
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!gameOver) {
       const userAnswer = e.currentTarget.value[0];
-      console.log(userAnswer);
       const correctAnswer = questions[questionNum].answer;
       const correct = userAnswer === correctAnswer;
 
@@ -90,8 +84,16 @@ function App() {
         correct,
         correctAnswer,
       };
-      setUserAnswers([...userAnswers, answerObject]);
+
+      // Prevents the user from submitting more than 1 answer via Reveal Answer button
+      if (userAnswers.length !== questionNum + 1)
+        setUserAnswers([...userAnswers, answerObject]);
     }
+  };
+
+  const toggleShowAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setShowAnswer(!showAnswer);
+    checkAnswer(e);
   };
 
   const nextQuestion = () => {
@@ -124,7 +126,7 @@ function App() {
               answerDetails={questions[questionNum].answerDetails}
               userAnswer={userAnswers ? userAnswers[questionNum] : undefined}
               showAnswer={showAnswer}
-              toggleShowAnswer={() => setShowAnswer(!showAnswer)}
+              toggleShowAnswer={toggleShowAnswer}
               checkAnswer={checkAnswer}
             />
           ) : null}
