@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { AnswerObject } from "../App";
 import { Wrapper, ButtonWrapper } from "./QuestionCard.styles";
 
 type QuestionProps = {
   question: string;
-  answers: string[];
+  codeBlock: string;
+  choices: string[];
+  answer: string;
+  answerDetails: string[];
   callback: (e: React.MouseEvent<HTMLButtonElement>) => void;
   userAnswer: AnswerObject | undefined;
   questionNum: number;
@@ -13,32 +16,58 @@ type QuestionProps = {
 
 const QuestionCard: React.FC<QuestionProps> = ({
   question,
-  answers,
+  codeBlock,
+  choices,
+  answer,
+  answerDetails,
   callback,
   userAnswer,
   questionNum,
   totalQuestions,
 }) => {
+  const [showAnswer, toggleShowAnswer] = useState(false);
   return (
     <Wrapper>
       <div className='question-card'>
         <p className='number'>
           Question: {questionNum} / {totalQuestions}
         </p>
-        <p dangerouslySetInnerHTML={{ __html: question }} />
+        <p>{question}</p>
+        {codeBlock !== "" ? (
+          <div className='code-block'>
+            <pre>{codeBlock}</pre>
+          </div>
+        ) : null}
         <div>
-          {answers.map((answer) => (
+          {choices.map((choice) => (
             <ButtonWrapper
-              key={answer}
-              correct={userAnswer?.correctAnswer === answer}
-              userClicked={userAnswer?.userAnswer === answer}
+              key={choice}
+              correct={userAnswer?.correctAnswer === choice[0]}
+              userClicked={userAnswer?.userAnswer[0] === choice[0]}
             >
-              <button disabled={!!userAnswer} onClick={callback} value={answer}>
-                <span dangerouslySetInnerHTML={{ __html: answer }} />
+              <button disabled={!!userAnswer} onClick={callback} value={choice}>
+                <span>{choice}</span>
               </button>
             </ButtonWrapper>
           ))}
         </div>
+        <button
+          className='reveal-answer'
+          onClick={() => {
+            toggleShowAnswer(!showAnswer);
+          }}
+        >
+          Reveal Answer{" "}
+          <i className={`fas fa-play ${showAnswer && "rotate"}`}></i>
+        </button>
+        {showAnswer ? (
+          <div className='answer-details'>
+            <p>Answer: {answer}</p>
+            {answerDetails.map((detail) => (
+              <p key={detail}>{detail}</p>
+            ))}
+          </div>
+        ) : null}
       </div>
     </Wrapper>
   );

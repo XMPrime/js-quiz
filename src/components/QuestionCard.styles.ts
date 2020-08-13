@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 export const Wrapper = styled.div`
-  max-width: 1100px;
   background: #ebfeff;
   border-radius: 10px;
   border: 2px solid #0085a3;
@@ -10,6 +9,18 @@ export const Wrapper = styled.div`
   text-align: center;
   p {
     font-size: 1rem;
+  }
+  .question-card {
+    min-width: 40vw;
+    max-width: 40vw;
+  }
+  .code-block,
+  .answer-details {
+    text-align: left;
+    /* width: 100%; */
+  }
+  .rotate {
+    transform: rotate(90deg);
   }
 `;
 

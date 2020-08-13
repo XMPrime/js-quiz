@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { fetchQuizQuestions, Difficulty, QuestionState } from "./API";
 import QuestionCard from "./components/QuestionCard";
 import { GlobalStyle, Wrapper } from "./App.styles";
-import { questionRandomizer } from "./utils";
+import { randomNumGen } from "./utils";
 
 const axios = require("axios");
 
@@ -14,66 +14,59 @@ export type AnswerObject = {
 };
 
 export type QuestionObject = {
-  category: string;
-  correct_answer: string;
-  difficulty: string;
-  incorrect_answers: string[];
   question: string;
-  type: string;
+  codeBlock: string;
+  choices: string[];
+  answer: string;
+  answerDetails: string[];
 };
 
 const TOTAL_QUESTIONS = 10;
 
 function App() {
   const [loading, setLoading] = useState(false);
-  // const [questions, setQuestions] = useState<QuestionState[]>([]);
+  const [questions, setQuestions] = useState<QuestionObject[]>([]);
   const [questionNum, setQuestionNum] = useState(0);
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
 
-  //Questions, Choices, Answers, Answer Details
-  const [questions, setQuestions] = useState([]);
-  const [choiceSets, setChoiceSets] = useState([]);
-  const [answers, setAnswers] = useState([]);
-  const [answerDetailSets, setAnswerDetailSets] = useState([]);
+  // //Questions, Choices, Answers, Answer Details
+  // const [questions, setQuestions] = useState([]);
+  // const [choiceSets, setChoiceSets] = useState([]);
+  // const [answers, setAnswers] = useState([]);
+  // const [answerDetailSets, setAnswerDetailSets] = useState([]);
 
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(true);
 
-  const loadQuizData = async (size: number) => {
-    const data = await (
-      await fetch("http://localhost:4000/quiz-questions")
-    ).json();
-    console.log(data);
-    // const randomNumbers = questionRandomizer(size);
-    // console.log(randomNumbers);
+  const generateQuestions = async (size: number) => {
+    const {
+      questions,
+      codeBlocks,
+      choiceSets,
+      answers,
+      answerDetailSets,
+    } = await (await fetch("http://localhost:4000/quiz-questions")).json();
 
-    setQuestions(data.questions);
-    setChoiceSets(data.choiceSets);
-    setAnswers(data.Answers);
-    setAnswerDetailSets(data.answerDetailSets);
+    const randomNumbers = randomNumGen(size, questions.length);
 
-    return data.results.map((question: QuestionObject) => {});
+    const randomQuestions = randomNumbers.map((number) => {
+      return {
+        question: questions[number],
+        codeBlock: codeBlocks[number],
+        choices: choiceSets[number],
+        answer: answers[number],
+        answerDetails: answerDetailSets[number],
+      };
+    });
+
+    return randomQuestions;
   };
 
   const startTrivia = async () => {
     setLoading(true);
     setGameOver(false);
 
-    // const newQuestions = await loadQuestions(TOTAL_QUESTIONS);
-    const newQuestions = await fetchQuizQuestions(
-      TOTAL_QUESTIONS,
-      Difficulty.EASY
-    );
-
-    loadQuizData(TOTAL_QUESTIONS);
-
-    // try {
-    //   const res = await axios.get("http://localhost:4000/quiz-questions");
-
-    //   if (res.status = 200) {
-
-    //   }
-    // }
+    const newQuestions = await generateQuestions(TOTAL_QUESTIONS);
 
     setQuestions(newQuestions);
     setScore(0);
@@ -84,8 +77,9 @@ function App() {
 
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!gameOver) {
-      const userAnswer = e.currentTarget.value;
-      const correctAnswer = questions[questionNum].correct_answer;
+      const userAnswer = e.currentTarget.value[0];
+      console.log(userAnswer);
+      const correctAnswer = questions[questionNum].answer;
       const correct = userAnswer === correctAnswer;
 
       if (correct) setScore(score + 1);
@@ -122,7 +116,10 @@ function App() {
               questionNum={questionNum + 1}
               totalQuestions={TOTAL_QUESTIONS}
               question={questions[questionNum].question}
-              answers={questions[questionNum].answers}
+              codeBlock={questions[questionNum].codeBlock}
+              choices={questions[questionNum].choices}
+              answer={questions[questionNum].answer}
+              answerDetails={questions[questionNum].answerDetails}
               userAnswer={userAnswers ? userAnswers[questionNum] : undefined}
               callback={checkAnswer}
             />
