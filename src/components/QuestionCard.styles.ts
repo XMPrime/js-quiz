@@ -17,7 +17,6 @@ export const Wrapper = styled.div`
   .code-block,
   .answer-details {
     text-align: left;
-    /* width: 100%; */
   }
   .rotate {
     transform: rotate(90deg);

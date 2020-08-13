@@ -28,7 +28,7 @@ function App() {
   const [questions, setQuestions] = useState<QuestionObject[]>([]);
   const [questionNum, setQuestionNum] = useState(0);
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
-
+  const [showAnswer, setShowAnswer] = useState(false);
   // //Questions, Choices, Answers, Answer Details
   // const [questions, setQuestions] = useState([]);
   // const [choiceSets, setChoiceSets] = useState([]);
@@ -93,10 +93,12 @@ function App() {
       setUserAnswers([...userAnswers, answerObject]);
     }
   };
+
   const nextQuestion = () => {
     const nextQuestion = questionNum + 1;
     if (nextQuestion === TOTAL_QUESTIONS) setGameOver(true);
     else setQuestionNum(questionNum + 1);
+    setShowAnswer(false);
   };
   return (
     <>
@@ -121,7 +123,9 @@ function App() {
               answer={questions[questionNum].answer}
               answerDetails={questions[questionNum].answerDetails}
               userAnswer={userAnswers ? userAnswers[questionNum] : undefined}
-              callback={checkAnswer}
+              showAnswer={showAnswer}
+              toggleShowAnswer={() => setShowAnswer(!showAnswer)}
+              checkAnswer={checkAnswer}
             />
           ) : null}
           {!loading &&

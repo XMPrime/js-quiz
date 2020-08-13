@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AnswerObject } from "../App";
 import { Wrapper, ButtonWrapper } from "./QuestionCard.styles";
 
@@ -8,7 +8,9 @@ type QuestionProps = {
   choices: string[];
   answer: string;
   answerDetails: string[];
-  callback: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  toggleShowAnswer: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  showAnswer: boolean;
+  checkAnswer: (e: React.MouseEvent<HTMLButtonElement>) => void;
   userAnswer: AnswerObject | undefined;
   questionNum: number;
   totalQuestions: number;
@@ -20,12 +22,13 @@ const QuestionCard: React.FC<QuestionProps> = ({
   choices,
   answer,
   answerDetails,
-  callback,
+  toggleShowAnswer,
+  checkAnswer,
+  showAnswer,
   userAnswer,
   questionNum,
   totalQuestions,
 }) => {
-  const [showAnswer, toggleShowAnswer] = useState(false);
   return (
     <Wrapper>
       <div className='question-card'>
@@ -45,18 +48,17 @@ const QuestionCard: React.FC<QuestionProps> = ({
               correct={userAnswer?.correctAnswer === choice[0]}
               userClicked={userAnswer?.userAnswer[0] === choice[0]}
             >
-              <button disabled={!!userAnswer} onClick={callback} value={choice}>
+              <button
+                disabled={!!userAnswer}
+                onClick={checkAnswer}
+                value={choice}
+              >
                 <span>{choice}</span>
               </button>
             </ButtonWrapper>
           ))}
         </div>
-        <button
-          className='reveal-answer'
-          onClick={() => {
-            toggleShowAnswer(!showAnswer);
-          }}
-        >
+        <button className='reveal-answer' onClick={toggleShowAnswer}>
           Reveal Answer{" "}
           <i className={`fas fa-play ${showAnswer && "rotate"}`}></i>
         </button>
