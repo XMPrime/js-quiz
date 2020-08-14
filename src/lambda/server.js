@@ -1,20 +1,22 @@
 const puppeteer = require("puppeteer");
 const express = require("express");
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
+const serverless = require("serverless-http");
 const app = express();
-const jsonParser = bodyParser.json();
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
-const port = process.env.PORT || 4000;
+const router = express.Router();
+// const jsonParser = bodyParser.json();
+// const urlencodedParser = bodyParser.urlencoded({ extended: false });
+// const port = process.env.PORT || 4000;
 
-app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*"); // disabled for security on local
   res.header("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
 
-app.get("/quiz-questions", urlencodedParser, async (req, res) => {
+app.get("/quiz-questions", async (req, res) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto("https://github.com/lydiahallie/javascript-questions/");
@@ -90,5 +92,7 @@ const createAnswerDetailSets = (array) => {
   }
   return answerSets;
 };
+app.use("/", router);
+module.exports = app;
 
-app.listen(port, () => console.log(`listening on PORT ${port}`));
+module.exports.handler = serverless(app);
