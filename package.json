@@ -3,19 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/runtime": "^7.11.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "@types/aws-lambda": "^8.10.61",
     "@types/jest": "^24.0.0",
-    "@types/node": "^12.0.0",
+    "@types/node": "^14.6.0",
     "@types/react": "^16.9.0",
     "@types/react-dom": "^16.9.0",
     "@types/styled-components": "^5.1.2",
+    "aws-lambda": "^1.0.6",
     "axios": "^0.19.2",
+    "chrome-aws-lambda": "^5.2.1",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
-    "puppeteer": "^5.2.1",
-    "puppeteer-extra": "^3.1.13",
-    "puppeteer-extra-plugin-stealth": "^2.5.0",
+    "http-proxy-middleware": "^1.0.5",
+    "netlify-lambda": "^2.0.1",
+    "npm-run-all": "^4.1.5",
+    "puppeteer-core": "^5.2.1",
     "react": "16.8",
     "react-dom": "16.8",
     "react-is": "16.8",
@@ -26,12 +32,13 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start:lambda": "netlify-lambda serve src/lambda",
+    "start:lambda": "netlify-lambda serve src/netlify-functions",
     "build": "run-p build:**",
     "build:app": "react-scripts build",
-    "build:lambda": "netlify-lambda build src/lambda",
+    "build:lambda": "netlify-lambda build src/netlify-functions",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lambda": "netlify-lambda server src/netlify-functions"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -52,6 +59,9 @@
     "styled-components": "^5"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "@babel/plugin-transform-runtime": "^7.11.0",
+    "@babel/preset-typescript": "^7.10.4",
+    "nodemon": "^2.0.4",
+    "puppeteer": "^5.2.1"
   }
 }

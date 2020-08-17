@@ -34,14 +34,20 @@ function App() {
   }, [showAnswer]);
 
   const generateQuestions = async (size: number) => {
+    const options = {
+      headers: { accept: "Accept: application/json" },
+    };
+
     const {
       questions,
       codeBlocks,
       choiceSets,
       answers,
       answerDetailSets,
-    } = await (await fetch("http://localhost:9000/quiz-questions")).json();
-
+    } = await (
+      await fetch("http://localhost:8888/.netlify/functions/test/", options)
+    ).json();
+    // .then(res => res.json())
     const randomNumbers = randomNumGen(size, questions.length);
 
     const randomQuestions = randomNumbers.map((number) => {
