@@ -49,7 +49,13 @@ exports.handler = async (event) => {
 
   return {
     statusCode: 200,
-    body: { questions, codeBlocks, choiceSets, answers, answerDetailSets },
+    body: JSON.stringify({
+      questions,
+      codeBlocks,
+      choiceSets,
+      answers,
+      answerDetailSets,
+    }),
   };
 };
 
