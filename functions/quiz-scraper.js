@@ -1,8 +1,11 @@
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
+const chromium = require("chrome-aws-lambda");
 
 exports.handler = async (event) => {
-  const subject = event.queryStringParameters.name || "World";
-  const browser = await puppeteer.launch();
+  const browser = await chromium.puppeteer.launch({
+    // Required
+    executablePath: await chromium.executablePath,
+  });
   const page = await browser.newPage();
   await page.goto("https://github.com/lydiahallie/javascript-questions/");
   const questions = await page.$$eval("h6", (questions) =>

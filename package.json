@@ -12,8 +12,9 @@
     "@types/react-dom": "^16.9.0",
     "@types/styled-components": "^5.1.2",
     "axios": "^0.19.2",
+    "chrome-aws-lambda": "^5.2.1",
     "express": "^4.17.1",
-    "puppeteer": "^5.2.1",
+    "puppeteer-core": "^5.2.1",
     "puppeteer-extra": "^3.1.13",
     "puppeteer-extra-plugin-stealth": "^2.5.0",
     "react": "16.8",
@@ -48,6 +49,7 @@
     "styled-components": "^5"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "puppeteer": "^5.2.1"
   }
 }
