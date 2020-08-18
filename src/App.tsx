@@ -37,7 +37,7 @@ function App() {
     setGameOver(false);
 
     const options = {
-      method: "GET",
+      method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({ size: TOTAL_QUESTIONS }),
     };
