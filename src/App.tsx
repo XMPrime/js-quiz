@@ -34,31 +34,46 @@ function App() {
   }, [showAnswer]);
 
   const generateQuestions = async (size: number) => {
-    const {
-      questions,
-      codeBlocks,
-      choiceSets,
-      answers,
-      answerDetailSets,
-    } = await (
+    const options = {
+      method: "GET",
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify({ size: TOTAL_QUESTIONS }),
+    };
+    // const {
+    //   questions,
+    //   codeBlocks,
+    //   choiceSets,
+    //   answers,
+    //   answerDetailSets,
+    // } = await (
+    //   await fetch(
+    //     "https://peaceful-ramanujan-eb6472.netlify.app/.netlify/functions/quiz-scraper",
+    //     options
+    //   )
+    // ).json();
+
+    // const randomNumbers = randomNumGen(size, questions.length);
+
+    // const randomQuestions = randomNumbers.map((number) => {
+    //   return {
+    //     question: questions[number],
+    //     codeBlock: codeBlocks[number],
+    //     choices: choiceSets[number],
+    //     answer: answers[number],
+    //     answerDetails: answerDetailSets[number],
+    //   };
+    // });
+
+    // return randomQuestions;
+
+    const questions = await (
       await fetch(
-        "https://peaceful-ramanujan-eb6472.netlify.app/.netlify/functions/quiz-scraper"
+        "https://peaceful-ramanujan-eb6472.netlify.app/.netlify/functions/quiz-scraper",
+        options
       )
     ).json();
 
-    const randomNumbers = randomNumGen(size, questions.length);
-
-    const randomQuestions = randomNumbers.map((number) => {
-      return {
-        question: questions[number],
-        codeBlock: codeBlocks[number],
-        choices: choiceSets[number],
-        answer: answers[number],
-        answerDetails: answerDetailSets[number],
-      };
-    });
-
-    return randomQuestions;
+    return questions;
   };
 
   const startTrivia = async () => {

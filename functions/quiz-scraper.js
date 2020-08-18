@@ -1,7 +1,12 @@
-// const puppeteer = require("puppeteer");
+import {
+  createChoiceSets,
+  createAnswerDetailSets,
+  randomNumGen,
+} from "../src/utils";
 const chromium = require("chrome-aws-lambda");
 
 exports.handler = async (event) => {
+  const size = JSON.parse(event.body).size;
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
@@ -45,47 +50,22 @@ exports.handler = async (event) => {
   );
 
   const answerDetailSets = createAnswerDetailSets(answerDetails);
+
+  const randomNumbers = randomNumGen(size, questions.length);
+
+  const randomQuestions = randomNumbers.map((number) => {
+    return {
+      question: questions[number],
+      codeBlock: codeBlocks[number],
+      choices: choiceSets[number],
+      answer: answers[number],
+      answerDetails: answerDetailSets[number],
+    };
+  });
   await browser.close();
 
   return {
     statusCode: 200,
-    body: JSON.stringify({
-      questions,
-      codeBlocks,
-      choiceSets,
-      answers,
-      answerDetailSets,
-    }),
+    body: JSON.stringify(randomQuestions),
   };
-};
-
-const createChoiceSets = (array) => {
-  let choiceSets = [];
-  let set = [array[0]];
-  for (let i = 1; i < array.length; i++) {
-    if (array[i].charCodeAt(0) - array[i - 1].charCodeAt(0) === 1) {
-      set.push(array[i]);
-    } else {
-      choiceSets.push(set);
-      set = [array[i]];
-    }
-    if (i === array.length - 1) choiceSets.push(set);
-  }
-  return choiceSets;
-};
-
-const createAnswerDetailSets = (array) => {
-  const regex = /^[0-9]{1,3}\.\s/;
-  let answerSets = [];
-  let set = [];
-  for (let i = 1; i < array.length; i++) {
-    if (!regex.test(array[i])) {
-      set.push(array[i]);
-    }
-    if (regex.test(array[i]) || i === array.length - 1) {
-      answerSets.push(set);
-      set = [];
-    }
-  }
-  return answerSets;
 };
