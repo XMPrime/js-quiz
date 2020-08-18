@@ -8,15 +8,38 @@ const router = express.Router();
 // const urlencodedParser = bodyParser.urlencoded({ extended: false });
 // const port = process.env.PORT || 4000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*"); // disabled for security on local
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
+const createChoiceSets = (array) => {
+  let choiceSets = [];
+  let set = [array[0]];
+  for (let i = 1; i < array.length; i++) {
+    if (array[i].charCodeAt(0) - array[i - 1].charCodeAt(0) === 1) {
+      set.push(array[i]);
+    } else {
+      choiceSets.push(set);
+      set = [array[i]];
+    }
+    if (i === array.length - 1) choiceSets.push(set);
+  }
+  return choiceSets;
+};
 
-app.get("/quiz-questions", async (req, res) => {
+const createAnswerDetailSets = (array) => {
+  const regex = /^[0-9]{1,3}\.\s/;
+  let answerSets = [];
+  let set = [];
+  for (let i = 1; i < array.length; i++) {
+    if (!regex.test(array[i])) {
+      set.push(array[i]);
+    }
+    if (regex.test(array[i]) || i === array.length - 1) {
+      answerSets.push(set);
+      set = [];
+    }
+  }
+  return answerSets;
+};
+
+router.get("/", async (req, res) => {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto("https://github.com/lydiahallie/javascript-questions/");
@@ -62,37 +85,14 @@ app.get("/quiz-questions", async (req, res) => {
   await browser.close();
 });
 
-const createChoiceSets = (array) => {
-  let choiceSets = [];
-  let set = [array[0]];
-  for (let i = 1; i < array.length; i++) {
-    if (array[i].charCodeAt(0) - array[i - 1].charCodeAt(0) === 1) {
-      set.push(array[i]);
-    } else {
-      choiceSets.push(set);
-      set = [array[i]];
-    }
-    if (i === array.length - 1) choiceSets.push(set);
-  }
-  return choiceSets;
-};
-
-const createAnswerDetailSets = (array) => {
-  const regex = /^[0-9]{1,3}\.\s/;
-  let answerSets = [];
-  let set = [];
-  for (let i = 1; i < array.length; i++) {
-    if (!regex.test(array[i])) {
-      set.push(array[i]);
-    }
-    if (regex.test(array[i]) || i === array.length - 1) {
-      answerSets.push(set);
-      set = [];
-    }
-  }
-  return answerSets;
-};
-app.use("/", router);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*"); // disabled for security on local
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
+app.use("/.netlify/functions/server", router);
 module.exports = app;
 
 module.exports.handler = serverless(app);

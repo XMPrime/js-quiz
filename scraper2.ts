@@ -1,8 +1,14 @@
 // import { Handler, Context, Callback, APIGatewayEvent } from "aws-lambda";
-import { createAnswerDetailSets, createChoiceSets } from "../utils";
-const puppeteer = require("puppeteer-core");
-const chromium = require("chrome-aws-lambda");
+import { createChoiceSets, createAnswerDetailSets } from "./utils";
 
+const puppeteer = require("puppeteer");
+const express = require("express");
+const cors = require("cors");
+const serverless = require("serverless-http");
+const app = express();
+const router = express.Router();
+
+//
 type textContentArray = { textContent: string }[];
 type codeBlockArray = {
   nextElementSibling: {
@@ -11,17 +17,17 @@ type codeBlockArray = {
   };
 }[];
 
-exports.handler = async (event: any, context: any) => {
-  const browser = await puppeteer.launch({
-    // Required
-    executablePath: await chromium.executablePath,
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(function (req: any, res: any, next: any) {
+  res.header("Access-Control-Allow-Origin", "*"); // disabled for security on local
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
+// app.use(cors());
 
-    // Optional
-    // args: chromium.args,
-    // defaultViewport: chromium.defaultViewport,
-    // headless: chromium.headless
-  });
-
+router.get("/.netlify/functions/scraper/", async (req: any, res: any) => {
+  const browser = await puppeteer.launch();
   const page = await browser.newPage();
   await page.goto("https://github.com/lydiahallie/javascript-questions/");
 
@@ -64,16 +70,10 @@ exports.handler = async (event: any, context: any) => {
 
   const answerDetailSets = createAnswerDetailSets(answerDetails);
 
-  await browser.close();
+  res.send({ questions, codeBlocks, choiceSets, answers, answerDetailSets });
 
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      questions,
-      codeBlocks,
-      choiceSets,
-      answers,
-      answerDetailSets,
-    }),
-  };
-};
+  await browser.close();
+});
+app.use(`/.netlify/functions/test`, router);
+module.exports = app;
+module.exports.handler = app;

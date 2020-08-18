@@ -45,7 +45,7 @@ function App() {
       answers,
       answerDetailSets,
     } = await (
-      await fetch("http://localhost:8888/.netlify/functions/test/", options)
+      await fetch("http://localhost:8888/.netlify/functions/server/")
     ).json();
     // .then(res => res.json())
     const randomNumbers = randomNumGen(size, questions.length);
