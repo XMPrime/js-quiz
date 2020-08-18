@@ -29,7 +29,6 @@ const QuestionCard: React.FC<QuestionProps> = ({
   questionNum,
   totalQuestions,
 }) => {
-  console.log(userAnswer);
   return (
     <Wrapper>
       <div className='question-card'>
