@@ -54,6 +54,7 @@ app.get("/quiz-questions", urlencodedParser, async (req, res) => {
   );
 
   const answerDetailSets = createAnswerDetailSets(answerDetails);
+  console.log(codeBlocks[1]);
 
   res.send({ questions, codeBlocks, choiceSets, answers, answerDetailSets });
 
