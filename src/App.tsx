@@ -40,7 +40,7 @@ function App() {
       choiceSets,
       answers,
       answerDetailSets,
-    } = await (await fetch("http://localhost:4000/quiz-questions")).json();
+    } = await (await fetch("http://localhost:8888/quiz-questions")).json();
 
     const randomNumbers = randomNumGen(size, questions.length);
 
