@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import QuestionCard from "./components/QuestionCard";
 import { GlobalStyle, Wrapper } from "./App.styles";
-import { randomNumGen } from "./utils";
 
 export type AnswerObject = {
   question: string;
@@ -33,54 +32,22 @@ function App() {
     window.scrollTo(0, document.body.scrollHeight);
   }, [showAnswer]);
 
-  const generateQuestions = async (size: number) => {
+  const startTrivia = async () => {
+    setLoading(true);
+    setGameOver(false);
+
     const options = {
       method: "GET",
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({ size: TOTAL_QUESTIONS }),
     };
-    // const {
-    //   questions,
-    //   codeBlocks,
-    //   choiceSets,
-    //   answers,
-    //   answerDetailSets,
-    // } = await (
-    //   await fetch(
-    //     "https://peaceful-ramanujan-eb6472.netlify.app/.netlify/functions/quiz-scraper",
-    //     options
-    //   )
-    // ).json();
 
-    // const randomNumbers = randomNumGen(size, questions.length);
-
-    // const randomQuestions = randomNumbers.map((number) => {
-    //   return {
-    //     question: questions[number],
-    //     codeBlock: codeBlocks[number],
-    //     choices: choiceSets[number],
-    //     answer: answers[number],
-    //     answerDetails: answerDetailSets[number],
-    //   };
-    // });
-
-    // return randomQuestions;
-
-    const questions = await (
+    const newQuestions = await (
       await fetch(
-        "https://peaceful-ramanujan-eb6472.netlify.app/.netlify/functions/quiz-scraper",
+        "https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper",
         options
       )
     ).json();
-
-    return questions;
-  };
-
-  const startTrivia = async () => {
-    setLoading(true);
-    setGameOver(false);
-
-    const newQuestions = await generateQuestions(TOTAL_QUESTIONS);
 
     setQuestions(newQuestions);
     setScore(0);
