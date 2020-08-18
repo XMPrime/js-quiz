@@ -3,8 +3,10 @@ const chromium = require("chrome-aws-lambda");
 
 exports.handler = async (event) => {
   const browser = await chromium.puppeteer.launch({
-    // Required
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath,
+    headless: chromium.headless,
   });
   const page = await browser.newPage();
   await page.goto("https://github.com/lydiahallie/javascript-questions/");
