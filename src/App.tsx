@@ -40,7 +40,11 @@ function App() {
       choiceSets,
       answers,
       answerDetailSets,
-    } = await (await fetch("http://localhost:8888/quiz-questions")).json();
+    } = await (
+      await fetch(
+        "https://peaceful-ramanujan-eb6472.netlify.app/.netlify/functions/quiz-scraper"
+      )
+    ).json();
 
     const randomNumbers = randomNumGen(size, questions.length);
 
