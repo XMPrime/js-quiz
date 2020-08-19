@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AnswerObject } from "../App";
 import { Wrapper, ButtonWrapper } from "./QuestionCard.styles";
+import Prism from "prismjs";
+import "../prism.css";
 
 type QuestionProps = {
   question: string;
@@ -29,6 +31,10 @@ const QuestionCard: React.FC<QuestionProps> = ({
   questionNum,
   totalQuestions,
 }) => {
+  useEffect(() => {
+    Prism.highlightAll();
+  });
+
   return (
     <Wrapper>
       <div className='question-card'>
@@ -38,7 +44,9 @@ const QuestionCard: React.FC<QuestionProps> = ({
         <p>{question}</p>
         {codeBlock !== "" ? (
           <div className='code-block'>
-            <pre>{codeBlock}</pre>
+            <pre>
+              <code className='language-javascript'>{`${codeBlock}`}</code>
+            </pre>
           </div>
         ) : null}
         <div>

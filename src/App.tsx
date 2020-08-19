@@ -38,16 +38,21 @@ function App() {
 
     const options = {
       method: "POST",
-      headers: { "Content-Type": "application/json; charset=utf-8" },
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        Accept: "application/json",
+      },
       body: JSON.stringify({ size: TOTAL_QUESTIONS }),
     };
 
     const newQuestions = await (
       await fetch(
-        "https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper",
+        "https://cors-anywhere.herokuapp.com/https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper",
         options
       )
     ).json();
+
+    console.log(newQuestions[0].codeBlock);
 
     setQuestions(newQuestions);
     setScore(0);

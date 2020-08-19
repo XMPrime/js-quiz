@@ -18,6 +18,9 @@ export const Wrapper = styled.div`
   .answer-details {
     text-align: left;
   }
+  .language-javascript {
+    border-radius: 10px;
+  }
   .rotate {
     transform: rotate(90deg);
   }
