@@ -1,16 +1,4 @@
 const chromium = require("chrome-aws-lambda");
-// const {createChoiceSets, createAnswerDetailSets } = require('../src/utils')
-
-const randomNumGen = (num, length) => {
-  let uniqueNumbers = [];
-
-  while (uniqueNumbers.length < num) {
-    let r = Math.floor(Math.random() * length) + 1;
-    if (uniqueNumbers.indexOf(r) === -1) uniqueNumbers.push(r);
-  }
-
-  return uniqueNumbers;
-};
 
 const createChoiceSets = (array) => {
   let choiceSets = [];
@@ -44,7 +32,6 @@ const createAnswerDetailSets = (array) => {
 };
 
 exports.handler = async (event) => {
-  const size = JSON.parse(event.body).size;
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
@@ -88,19 +75,6 @@ exports.handler = async (event) => {
   );
 
   const answerDetailSets = createAnswerDetailSets(answerDetails);
-
-  // const randomNumbers = randomNumGen(size, questions.length);
-
-  // const randomQuestions = randomNumbers.map((number) => {
-  //   return {
-  //     question: questions[number],
-  //     codeBlock: codeBlocks[number],
-  //     choices: choiceSets[number],
-  //     answer: answers[number],
-  //     answerDetails: answerDetailSets[number],
-  //   };
-  // });
-  // await browser.close();
 
   return {
     statusCode: 200,

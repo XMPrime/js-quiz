@@ -35,6 +35,9 @@ const QuestionCard: React.FC<QuestionProps> = ({
     Prism.highlightAll();
   });
 
+  console.log(choices);
+  console.log(userAnswer);
+
   return (
     <Wrapper>
       <div className='question-card'>
@@ -53,6 +56,7 @@ const QuestionCard: React.FC<QuestionProps> = ({
           {choices.map((choice) => (
             <ButtonWrapper
               key={choice}
+              // checks the userAnswer against the 1st letter of the choice
               correct={userAnswer?.correctAnswer === choice[0]}
               userClicked={userAnswer?.userAnswer[0] === choice[0]}
             >

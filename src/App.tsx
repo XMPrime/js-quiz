@@ -18,11 +18,19 @@ export type QuestionObject = {
   answerDetails: string[];
 };
 
+export type allQuestionsObject = {
+  questions: string[];
+  codeBlocks: string[];
+  choiceSets: string[][];
+  answers: string[];
+  answerDetailSets: string[][];
+};
+
 const QUIZ_SIZE = 10;
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [questions, setQuestions] = useState<QuestionObject[]>([]);
+  const [questions, setQuestions] = useState<allQuestionsObject>();
   const [quiz, setQuiz] = useState<QuestionObject[]>([]);
   const [questionNum, setQuestionNum] = useState(0);
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
@@ -38,24 +46,8 @@ function App() {
     fetchQuestions();
   }, []);
 
-  const startTrivia = async () => {
-    // const options = {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json; charset=utf-8",
-    //     Accept: "application/json",
-    //   },
-    //   body: JSON.stringify({ size: QUIZ_SIZE }),
-    // };
-
-    // const newQuestions = await (
-    //   await fetch(
-    //     "https://cors-anywhere.herokuapp.com/https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper",
-    //     options
-    //   )
-    // ).json();
-    console.log(QUIZ_SIZE, questions.length);
-    const quiz = getRandomQuestions(QUIZ_SIZE, questions.length);
+  const startTrivia = async (allQuestions: allQuestionsObject) => {
+    const quiz = getRandomQuestions(QUIZ_SIZE, allQuestions);
 
     setGameOver(false);
     setQuiz(quiz);
@@ -66,9 +58,6 @@ function App() {
   };
 
   const restart = () => {
-    const quiz = getRandomQuestions(QUIZ_SIZE, questions.length);
-
-    setQuiz(quiz);
     setQuestionNum(0);
     setUserAnswers([]);
     setShowAnswer(false);
@@ -97,15 +86,18 @@ function App() {
     setLoading(false);
   };
 
-  const getRandomQuestions = (quizSize: number, totalQuestions: number) => {
-    const randomNumbers = randomNumGen(quizSize, totalQuestions);
+  const getRandomQuestions = (
+    quizSize: number,
+    quizObject: allQuestionsObject
+  ) => {
+    const randomNumbers = randomNumGen(quizSize, quizObject.questions.length);
     const randomQuestions = randomNumbers.map((number) => {
       return {
-        question: questions[number].question,
-        codeBlock: questions[number].codeBlock,
-        choices: questions[number].choices,
-        answer: questions[number].answer,
-        answerDetails: questions[number].answerDetails,
+        question: quizObject.questions[number],
+        codeBlock: quizObject.codeBlocks[number],
+        choices: quizObject.choiceSets[number],
+        answer: quizObject.answers[number],
+        answerDetails: quizObject.answerDetailSets[number],
       };
     });
 
@@ -145,50 +137,31 @@ function App() {
     setShowAnswer(false);
   };
 
-  // const codeBlock = `const randomValue = 21;
-
-  // function getInfo() {
-  //   console.log(typeof randomValue);
-  //   const randomValue = 'Lydia Hallie';
-  // }
-
-  // getInfo();`;
-
-  // const question = "129. What's the output?";
-  // const choices = [
-  //   "A: asl;dgfjkalsd",
-  //   "B: asl;dgfjkalsd",
-  //   "C: asl;dgfjkalsd",
-  //   "D: asl;dgfjkalsd",
-  // ];
-  // const answer = "A";
-  // const answerDetails = [
-  //   "Answer: D",
-  //   "Variables declared with the const keyword are not referencable before their initialization: this is called the temporal dead zone. In the getInfo function, the variable randomValue is scoped in the functional scope of getInfo. On the line where we want to log the value of typeof randomValue, the variable randomValue isn't initialized yet: a ReferenceError gets thrown! The engine didn't go down the scope chain since we declared the variable randomValue in the getInfo function.",
-  // ];
-
   return (
     <>
       <GlobalStyle />
       <Wrapper>
         <div className='App'>
           <h1>JS Quiz</h1>
-          {gameOver || userAnswers.length === QUIZ_SIZE ? (
-            <button className='start' onClick={startTrivia}>
+          {gameOver || userAnswers.length === QUIZ_SIZE ? !loading && questions ? 
+            <button
+              className='start'
+              onClick={() => questions && startTrivia(questions)}
+            >
               Start
             </button>
-          ) : null}
-          <button className='start' onClick={restart}>
-            Restart
-          </button>
+           : null : null}
+          {!loading && !gameOver ? 
+            <button className='start' onClick={restart}>
+              Restart
+            </button> : null
+          }
+          
           {!gameOver ? (
             <h4 className='score'>
               Score: {score} / {QUIZ_SIZE}
             </h4>
           ) : null}
-          {/* <h4 className='score'>
-            Score: {score} / {QUIZ_SIZE}
-          </h4> */}
           {loading ? <p className='loading'>Loading Questions...</p> : null}
           {!loading && !gameOver ? (
             <QuestionCard
@@ -205,19 +178,6 @@ function App() {
               checkAnswer={checkAnswer}
             />
           ) : null}
-          {/* <QuestionCard
-            questionNum={questionNum + 1}
-            totalQuestions={QUIZ_SIZE}
-            question={question}
-            codeBlock={codeBlock}
-            choices={choices}
-            answer={answer}
-            answerDetails={answerDetails}
-            userAnswer={userAnswers ? userAnswers[questionNum] : undefined}
-            showAnswer={showAnswer}
-            toggleShowAnswer={toggleShowAnswer}
-            checkAnswer={checkAnswer}
-          /> */}
           <div className='bottom-row'>
             {!loading &&
             !gameOver &&
@@ -227,9 +187,6 @@ function App() {
                 Next Question
               </button>
             ) : null}
-            {/* <button className='next' onClick={nextQuestion}>
-              Next Question
-            </button> */}
           </div>
           <footer className='credits'>
             <h3>
