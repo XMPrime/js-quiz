@@ -77,7 +77,7 @@ function App() {
 
     const questions = await (
       await fetch(
-        "https://cors-anywhere.herokuapp.com/https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper",
+        "https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper",
         options
       )
     ).json();
