@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import QuestionCard from "./components/QuestionCard";
 import { GlobalStyle, Wrapper } from "./App.styles";
+import { randomNumGen } from "./utils";
 
 export type AnswerObject = {
   question: string;
@@ -17,11 +18,12 @@ export type QuestionObject = {
   answerDetails: string[];
 };
 
-const TOTAL_QUESTIONS = 10;
+const QUIZ_SIZE = 10;
 
 function App() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [questions, setQuestions] = useState<QuestionObject[]>([]);
+  const [quiz, setQuiz] = useState<QuestionObject[]>([]);
   const [questionNum, setQuestionNum] = useState(0);
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -32,43 +34,94 @@ function App() {
     window.scrollTo(0, document.body.scrollHeight);
   }, [showAnswer]);
 
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
   const startTrivia = async () => {
-    setLoading(true);
+    // const options = {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json; charset=utf-8",
+    //     Accept: "application/json",
+    //   },
+    //   body: JSON.stringify({ size: QUIZ_SIZE }),
+    // };
+
+    // const newQuestions = await (
+    //   await fetch(
+    //     "https://cors-anywhere.herokuapp.com/https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper",
+    //     options
+    //   )
+    // ).json();
+    console.log(QUIZ_SIZE, questions.length);
+    const quiz = getRandomQuestions(QUIZ_SIZE, questions.length);
+
     setGameOver(false);
-
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({ size: TOTAL_QUESTIONS }),
-    };
-
-    const newQuestions = await (
-      await fetch(
-        "https://cors-anywhere.herokuapp.com/https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper",
-        options
-      )
-    ).json();
-
-    setQuestions(newQuestions);
+    setQuiz(quiz);
     setScore(0);
     setUserAnswers([]);
     setQuestionNum(0);
     setLoading(false);
   };
 
+  const restart = () => {
+    const quiz = getRandomQuestions(QUIZ_SIZE, questions.length);
+
+    setQuiz(quiz);
+    setQuestionNum(0);
+    setUserAnswers([]);
+    setShowAnswer(false);
+    setScore(0);
+    setGameOver(true);
+  };
+
+  const fetchQuestions = async () => {
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ size: QUIZ_SIZE }),
+    };
+
+    const questions = await (
+      await fetch(
+        "https://cors-anywhere.herokuapp.com/https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper",
+        options
+      )
+    ).json();
+
+    setQuestions(questions);
+    setLoading(false);
+  };
+
+  const getRandomQuestions = (quizSize: number, totalQuestions: number) => {
+    const randomNumbers = randomNumGen(quizSize, totalQuestions);
+    const randomQuestions = randomNumbers.map((number) => {
+      return {
+        question: questions[number].question,
+        codeBlock: questions[number].codeBlock,
+        choices: questions[number].choices,
+        answer: questions[number].answer,
+        answerDetails: questions[number].answerDetails,
+      };
+    });
+
+    return randomQuestions;
+  };
+
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!gameOver) {
       const userAnswer = e.currentTarget.value[0];
-      const correctAnswer = questions[questionNum].answer;
+      const correctAnswer = quiz[questionNum].answer;
       const correct = userAnswer === correctAnswer;
 
       if (correct) setScore(score + 1);
       // Saves answer in the array
       const answerObject = {
-        question: questions[questionNum].question,
+        question: quiz[questionNum].question,
         userAnswer,
         correct,
         correctAnswer,
@@ -87,7 +140,7 @@ function App() {
 
   const nextQuestion = () => {
     const nextQuestion = questionNum + 1;
-    if (nextQuestion === TOTAL_QUESTIONS) setGameOver(true);
+    if (nextQuestion === QUIZ_SIZE) setGameOver(true);
     else setQuestionNum(questionNum + 1);
     setShowAnswer(false);
   };
@@ -120,36 +173,32 @@ function App() {
       <Wrapper>
         <div className='App'>
           <h1>JS Quiz</h1>
-          {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
+          {gameOver || userAnswers.length === QUIZ_SIZE ? (
             <button className='start' onClick={startTrivia}>
               Start
             </button>
           ) : null}
+          <button className='start' onClick={restart}>
+            Restart
+          </button>
           {!gameOver ? (
             <h4 className='score'>
-              Score: {score} / {TOTAL_QUESTIONS}
+              Score: {score} / {QUIZ_SIZE}
             </h4>
           ) : null}
           {/* <h4 className='score'>
-            Score: {score} / {TOTAL_QUESTIONS}
+            Score: {score} / {QUIZ_SIZE}
           </h4> */}
-          {loading ? (
-            <p className='loading'>
-              Loading Questions
-              <span className='ellipsis1'>.</span>
-              <span className='ellipsis2'>.</span>
-              <span className='ellipsis3'>.</span>
-            </p>
-          ) : null}
+          {loading ? <p className='loading'>Loading Questions...</p> : null}
           {!loading && !gameOver ? (
             <QuestionCard
               questionNum={questionNum + 1}
-              totalQuestions={TOTAL_QUESTIONS}
-              question={questions[questionNum].question}
-              codeBlock={questions[questionNum].codeBlock}
-              choices={questions[questionNum].choices}
-              answer={questions[questionNum].answer}
-              answerDetails={questions[questionNum].answerDetails}
+              totalQuestions={QUIZ_SIZE}
+              question={quiz[questionNum].question}
+              codeBlock={quiz[questionNum].codeBlock}
+              choices={quiz[questionNum].choices}
+              answer={quiz[questionNum].answer}
+              answerDetails={quiz[questionNum].answerDetails}
               userAnswer={userAnswers ? userAnswers[questionNum] : undefined}
               showAnswer={showAnswer}
               toggleShowAnswer={toggleShowAnswer}
@@ -158,7 +207,7 @@ function App() {
           ) : null}
           {/* <QuestionCard
             questionNum={questionNum + 1}
-            totalQuestions={TOTAL_QUESTIONS}
+            totalQuestions={QUIZ_SIZE}
             question={question}
             codeBlock={codeBlock}
             choices={choices}
@@ -173,7 +222,7 @@ function App() {
             {!loading &&
             !gameOver &&
             userAnswers.length === questionNum + 1 &&
-            questionNum !== TOTAL_QUESTIONS - 1 ? (
+            questionNum !== QUIZ_SIZE - 1 ? (
               <button className='next' onClick={nextQuestion}>
                 Next Question
               </button>

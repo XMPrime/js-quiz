@@ -1,4 +1,5 @@
 const chromium = require("chrome-aws-lambda");
+// const {createChoiceSets, createAnswerDetailSets } = require('../src/utils')
 
 const randomNumGen = (num, length) => {
   let uniqueNumbers = [];
@@ -88,21 +89,27 @@ exports.handler = async (event) => {
 
   const answerDetailSets = createAnswerDetailSets(answerDetails);
 
-  const randomNumbers = randomNumGen(size, questions.length);
+  // const randomNumbers = randomNumGen(size, questions.length);
 
-  const randomQuestions = randomNumbers.map((number) => {
-    return {
-      question: questions[number],
-      codeBlock: codeBlocks[number],
-      choices: choiceSets[number],
-      answer: answers[number],
-      answerDetails: answerDetailSets[number],
-    };
-  });
-  await browser.close();
+  // const randomQuestions = randomNumbers.map((number) => {
+  //   return {
+  //     question: questions[number],
+  //     codeBlock: codeBlocks[number],
+  //     choices: choiceSets[number],
+  //     answer: answers[number],
+  //     answerDetails: answerDetailSets[number],
+  //   };
+  // });
+  // await browser.close();
 
   return {
     statusCode: 200,
-    body: JSON.stringify(randomQuestions),
+    body: JSON.stringify({
+      questions,
+      codeBlocks,
+      choiceSets,
+      answers,
+      answerDetailSets,
+    }),
   };
 };
