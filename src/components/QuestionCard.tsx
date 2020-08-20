@@ -35,9 +35,6 @@ const QuestionCard: React.FC<QuestionProps> = ({
     Prism.highlightAll();
   });
 
-  console.log(choices);
-  console.log(userAnswer);
-
   return (
     <Wrapper>
       <div className='question-card'>
