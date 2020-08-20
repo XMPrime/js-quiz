@@ -52,8 +52,6 @@ function App() {
       )
     ).json();
 
-    console.log(newQuestions[0].codeBlock);
-
     setQuestions(newQuestions);
     setScore(0);
     setUserAnswers([]);
@@ -93,6 +91,29 @@ function App() {
     else setQuestionNum(questionNum + 1);
     setShowAnswer(false);
   };
+
+  const codeBlock = `const randomValue = 21;
+
+  function getInfo() {
+    console.log(typeof randomValue);
+    const randomValue = 'Lydia Hallie';
+  }
+  
+  getInfo();`;
+
+  const question = "129. What's the output?";
+  const choices = [
+    "A: asl;dgfjkalsd",
+    "B: asl;dgfjkalsd",
+    "C: asl;dgfjkalsd",
+    "D: asl;dgfjkalsd",
+  ];
+  const answer = "A";
+  const answerDetails = [
+    "Answer: D",
+    "Variables declared with the const keyword are not referencable before their initialization: this is called the temporal dead zone. In the getInfo function, the variable randomValue is scoped in the functional scope of getInfo. On the line where we want to log the value of typeof randomValue, the variable randomValue isn't initialized yet: a ReferenceError gets thrown! The engine didn't go down the scope chain since we declared the variable randomValue in the getInfo function.",
+  ];
+
   return (
     <>
       <GlobalStyle />
@@ -104,8 +125,22 @@ function App() {
               Start
             </button>
           ) : null}
-          {!gameOver ? <p className='score'>Score: {score}</p> : null}
-          {loading ? <p>Loading Questions...</p> : null}
+          {!gameOver ? (
+            <h4 className='score'>
+              Score: {score} / {TOTAL_QUESTIONS}
+            </h4>
+          ) : null}
+          {/* <h4 className='score'>
+            Score: {score} / {TOTAL_QUESTIONS}
+          </h4> */}
+          {loading ? (
+            <p className='loading'>
+              Loading Questions
+              <span className='ellipsis1'>.</span>
+              <span className='ellipsis2'>.</span>
+              <span className='ellipsis3'>.</span>
+            </p>
+          ) : null}
           {!loading && !gameOver ? (
             <QuestionCard
               questionNum={questionNum + 1}
@@ -121,14 +156,44 @@ function App() {
               checkAnswer={checkAnswer}
             />
           ) : null}
-          {!loading &&
-          !gameOver &&
-          userAnswers.length === questionNum + 1 &&
-          questionNum !== TOTAL_QUESTIONS - 1 ? (
-            <button className='next' onClick={nextQuestion}>
+          {/* <QuestionCard
+            questionNum={questionNum + 1}
+            totalQuestions={TOTAL_QUESTIONS}
+            question={question}
+            codeBlock={codeBlock}
+            choices={choices}
+            answer={answer}
+            answerDetails={answerDetails}
+            userAnswer={userAnswers ? userAnswers[questionNum] : undefined}
+            showAnswer={showAnswer}
+            toggleShowAnswer={toggleShowAnswer}
+            checkAnswer={checkAnswer}
+          /> */}
+          <div className='bottom-row'>
+            {!loading &&
+            !gameOver &&
+            userAnswers.length === questionNum + 1 &&
+            questionNum !== TOTAL_QUESTIONS - 1 ? (
+              <button className='next' onClick={nextQuestion}>
+                Next Question
+              </button>
+            ) : null}
+            {/* <button className='next' onClick={nextQuestion}>
               Next Question
-            </button>
-          ) : null}
+            </button> */}
+          </div>
+          <footer className='credits'>
+            <h3>
+              App created by{" "}
+              <a href='https://github.com/XMPrime/js-quiz'>Jason Chen</a>
+            </h3>
+            <h3>
+              Questions created by{" "}
+              <a href='https://github.com/lydiahallie/javascript-questions'>
+                Lydia Hallie
+              </a>
+            </h3>
+          </footer>
         </div>
       </Wrapper>
     </>

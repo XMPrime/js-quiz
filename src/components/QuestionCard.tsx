@@ -38,10 +38,10 @@ const QuestionCard: React.FC<QuestionProps> = ({
   return (
     <Wrapper>
       <div className='question-card'>
-        <p className='number'>
+        <h4 className='number'>
           Question: {questionNum} / {totalQuestions}
-        </p>
-        <p>{question}</p>
+        </h4>
+        <h3 className='question'>{question}</h3>
         {codeBlock !== "" ? (
           <div className='code-block'>
             <pre>
@@ -71,7 +71,7 @@ const QuestionCard: React.FC<QuestionProps> = ({
           onClick={toggleShowAnswer}
           value='wrong'
         >
-          Reveal Answer{" "}
+          <span className='reveal-answer--button-text'>Reveal Answer</span>
           <i className={`fas fa-play ${showAnswer && "rotate"}`}></i>
         </button>
         {showAnswer ? (

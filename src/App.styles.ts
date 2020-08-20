@@ -1,5 +1,9 @@
 import styled, { createGlobalStyle } from "styled-components";
-import bgImage from "./images/jeremy-bishop--dunes.jpg";
+
+
+  const blueSapphire = '#05668dff';
+  const paleSpringBud = '#f0f3bdff';
+
 
 export const GlobalStyle = createGlobalStyle`
     html {
@@ -7,8 +11,7 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     body {
-        background-image: url(${bgImage});
-        background-size: auto 200vh;
+        background-color: ${blueSapphire};
         margin: 0;
         padding: 0 20px;
         display: flex;
@@ -17,14 +20,17 @@ export const GlobalStyle = createGlobalStyle`
 
     * {
         box-sizing: border-box;
-        font-family: 'Catamaran' sans-serif;
+        font-family: 'Open Sans', sans-serif;
     }
 `;
 
 export const Wrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
+
+  @media screen and (max-width: 600px) {
+    flex-direction: row;
+    justify-content: center;
+  }
 
   > p {
     color: #fff;
@@ -33,16 +39,9 @@ export const Wrapper = styled.div`
   }
 
   h1 {
-    font-family: Fascinate Inline;
-    background-image: linear-gradient(180deg, #fff, #87f1ff);
+    font-family: 'Alata', sans-serif;
+    color: ${paleSpringBud};
     font-weight: 400;
-    background-size: 100%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    -moz-background-clip: text;
-    -moz-text-fill-color: transparent;
-    filter: drop-shadow(2px 2px #0085a3);
     font-size: 70px;
     text-align: center;
     margin: 20px;
@@ -50,8 +49,9 @@ export const Wrapper = styled.div`
   .start,
   .next, .reveal-answer {
     cursor: pointer;
-    background: linear-gradient(180deg, #ffffff, #ffcc91);
-    border: 2px solid #d38558;
+    background-color: ${paleSpringBud};
+    font-size: 1rem;
+    border: none;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
     height: 40px;
@@ -60,5 +60,39 @@ export const Wrapper = styled.div`
   }
   .start {
     max-width: 200px;
+    
+  }
+  .bottom-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .score, .loading {
+    color: ${paleSpringBud};
+    font-size: 1rem;
+  }
+
+  @keyframes fadeIn {
+    0% {
+      display: none;
+      opacity: 0;
+    }
+    50% {
+      display: block;
+      opacity: 1;
+    }
+    100% {
+      display: none;
+      opacity: 0;
+    }
+  }
+  .loading {
+    animation: fadeIn 1.5s linear;
+    animation-iteration-count: 3;
+  }
+  .credits {
+    justify-content: center;
+  }
+  .credits, a, a:visited {
+    color: ${paleSpringBud}
   }
 `;
