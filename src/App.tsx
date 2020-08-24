@@ -66,18 +66,18 @@ function App() {
   };
 
   const fetchQuestions = async () => {
-    // const questions = await (
-    //   await fetch(
-    //     "https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper"
-    //   )
-    // ).json();
-
     fetch("https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper")
       .then((res) => res.text())
       .then((text) => console.log(text));
 
-    // setQuestions(questions);
-    // setLoading(false);
+    const questions = await (
+      await fetch(
+        "https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper"
+      )
+    ).json();
+
+    setQuestions(questions);
+    setLoading(false);
   };
 
   const getRandomQuestions = (
