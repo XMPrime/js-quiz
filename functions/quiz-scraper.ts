@@ -8,9 +8,18 @@ import {
 const chromium = require("chrome-aws-lambda");
 
 type textContent = { textContent: string }[];
+// type nextElementSibling = {
+//   nextElementSibling: { className: string; children: textContent };
+// }[];
 type nextElementSibling = {
   nextElementSibling: { className: string; children: textContent };
 }[];
+
+// blocks.map((block) => {
+//   if (block.nextElementSibling.className.includes("highlight"))
+//     return block.nextElementSibling.children[0].textContent;
+//   else return "";
+// })
 
 const createChoiceSets = (array: string[]): string[][] => {
   let choiceSets = [];
@@ -43,12 +52,8 @@ const createAnswerDetailSets = (array: string[]): string[][] => {
   }
   return answerSets;
 };
-// exports.handler = async (event) => {
-// export const handler = async (
-//   event: APIGatewayProxyEvent,
-//   context: Context
-// ): Promise<APIGatewayProxyResult> => {
-exports.handler = async (): Promise<APIGatewayProxyResult> => {
+export const handler = async (): Promise<APIGatewayProxyResult> => {
+  // exports.handler = async (): Promise<APIGatewayProxyResult> => {
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
@@ -97,6 +102,9 @@ exports.handler = async (): Promise<APIGatewayProxyResult> => {
 
   return {
     statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
       questions,
       codeBlocks,
