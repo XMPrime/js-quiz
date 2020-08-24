@@ -89,7 +89,7 @@ function App() {
   const getRandomQuestions = (
     quizSize: number,
     quizObject: allQuestionsObject
-  ) => {
+  ): QuestionObject[] => {
     const randomNumbers = randomNumGen(quizSize, quizObject.questions.length);
     const randomQuestions = randomNumbers.map((number) => {
       return {

@@ -1,9 +1,16 @@
-const chromium = require("chrome-aws-lambda");
+// const chromium = require("chrome-aws-lambda");
+import chromium from "chrome-aws-lambda";
+import {
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayProxyResult,
+} from "aws-lambda";
 
-const createChoiceSets = (array) => {
+const createChoiceSets = (array: string[]): string[][] => {
   let choiceSets = [];
   let set = [array[0]];
   for (let i = 1; i < array.length; i++) {
+    // Checks if current letter is directly after previous letter i.e. A->B
     if (array[i].charCodeAt(0) - array[i - 1].charCodeAt(0) === 1) {
       set.push(array[i]);
     } else {
@@ -15,7 +22,7 @@ const createChoiceSets = (array) => {
   return choiceSets;
 };
 
-const createAnswerDetailSets = (array) => {
+const createAnswerDetailSets = (array: string[]): string[][] => {
   const regex = /^[0-9]{1,3}\.\s/;
   let answerSets = [];
   let set = [];
@@ -30,8 +37,12 @@ const createAnswerDetailSets = (array) => {
   }
   return answerSets;
 };
+// exports.handler = async (event) => {
 
-exports.handler = async (event) => {
+export const handler = async (
+  event: APIGatewayProxyEvent,
+  context: Context
+): Promise<APIGatewayProxyResult> => {
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
