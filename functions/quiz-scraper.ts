@@ -1,11 +1,16 @@
 // import chromium from "chrome-aws-lambda";
-// import {
-//   APIGatewayProxyEvent,
-//   Context,
-//   APIGatewayProxyResult,
-// } from "aws-lambda";
-type APIGatewayProxyResult = AWSLambda.APIGatewayProxyResult;
+import {
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayProxyResult,
+} from "aws-lambda";
+// type APIGatewayProxyResult = AWSLambda.APIGatewayProxyResult;
 const chromium = require("chrome-aws-lambda");
+
+type textContent = { textContent: string }[];
+type nextElementSibling = {
+  nextElementSibling: { className: string; children: textContent };
+}[];
 
 const createChoiceSets = (array: string[]): string[][] => {
   let choiceSets = [];
@@ -53,11 +58,11 @@ exports.handler = async (): Promise<APIGatewayProxyResult> => {
   const page = await browser.newPage();
   await page.goto("https://github.com/lydiahallie/javascript-questions/");
 
-  const questions = await page.$$eval("h6", (questions) =>
+  const questions = await page.$$eval("h6", (questions: textContent) =>
     questions.map((question) => question.textContent)
   );
 
-  const codeBlocks = await page.$$eval("h6", (blocks) =>
+  const codeBlocks = await page.$$eval("h6", (blocks: nextElementSibling) =>
     blocks.map((block) => {
       if (block.nextElementSibling.className.includes("highlight"))
         return block.nextElementSibling.children[0].textContent;
@@ -65,7 +70,7 @@ exports.handler = async (): Promise<APIGatewayProxyResult> => {
     })
   );
 
-  const choices = await page.$$eval("ul > li", (choices) =>
+  const choices = await page.$$eval("ul > li", (choices: textContent) =>
     choices
       .map((choice) => {
         if (choice.textContent[1] === ":") return choice.textContent;
@@ -76,14 +81,16 @@ exports.handler = async (): Promise<APIGatewayProxyResult> => {
 
   const choiceSets = createChoiceSets(choices);
 
-  const answers = await page.$$eval("details > h4", (answers) =>
+  const answers = await page.$$eval("details > h4", (answers: textContent) =>
     answers.map((answer) => answer.textContent[answer.textContent.length - 1])
   );
 
-  const answerDetails = await page.$$eval("details > p, h6", (details) =>
-    details
-      .map((detail) => detail.textContent)
-      .filter((detail) => detail.length >= 3)
+  const answerDetails = await page.$$eval(
+    "details > p, h6",
+    (details: textContent) =>
+      details
+        .map((detail) => detail.textContent)
+        .filter((detail) => detail.length >= 3)
   );
 
   const answerDetailSets = createAnswerDetailSets(answerDetails);
