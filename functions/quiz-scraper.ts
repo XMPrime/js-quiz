@@ -38,8 +38,11 @@ const createAnswerDetailSets = (array: string[]): string[][] => {
   return answerSets;
 };
 // exports.handler = async (event) => {
-
-export const handler = async (
+// export const handler = async (
+//   event: APIGatewayProxyEvent,
+//   context: Context
+// ): Promise<APIGatewayProxyResult> => {
+exports.handler = async (
   event: APIGatewayProxyEvent,
   context: Context
 ): Promise<APIGatewayProxyResult> => {
