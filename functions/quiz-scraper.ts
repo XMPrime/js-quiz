@@ -8,18 +8,9 @@ import {
 const chromium = require("chrome-aws-lambda");
 
 type textContent = { textContent: string }[];
-// type nextElementSibling = {
-//   nextElementSibling: { className: string; children: textContent };
-// }[];
 type nextElementSibling = {
   nextElementSibling: { className: string; children: textContent };
 }[];
-
-// blocks.map((block) => {
-//   if (block.nextElementSibling.className.includes("highlight"))
-//     return block.nextElementSibling.children[0].textContent;
-//   else return "";
-// })
 
 const createChoiceSets = (array: string[]): string[][] => {
   let choiceSets = [];

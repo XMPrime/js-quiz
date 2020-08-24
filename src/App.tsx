@@ -69,7 +69,7 @@ function App() {
     const options = {
       method: "POST",
       headers: {
-        "Content-Type": "application/json; charset=utf-8",
+        "Content-Type": "application/json;",
         Accept: "application/json",
       },
       body: JSON.stringify({ size: QUIZ_SIZE }),
@@ -77,8 +77,7 @@ function App() {
 
     const questions = await (
       await fetch(
-        "https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper",
-        options
+        "https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper"
       )
     ).json();
 
