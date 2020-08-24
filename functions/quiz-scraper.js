@@ -31,8 +31,8 @@ const createAnswerDetailSets = (array) => {
   }
   return answerSets;
 };
-export const handler = async () => {
-  // exports.handler = async () => {
+
+exports.handler = async () => {
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
