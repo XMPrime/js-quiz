@@ -43,8 +43,8 @@ const createAnswerDetailSets = (array: string[]): string[][] => {
   }
   return answerSets;
 };
-export const handler = async (): Promise<APIGatewayProxyResult> => {
-// exports.handler = async (): Promise<APIGatewayProxyResult> => {
+// export const handler = async (): Promise<APIGatewayProxyResult> => {
+exports.handler = async (): Promise<APIGatewayProxyResult> => {
   
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,
