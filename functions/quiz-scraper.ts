@@ -1,10 +1,11 @@
-// const chromium = require("chrome-aws-lambda");
-import chromium from "chrome-aws-lambda";
-import {
-  APIGatewayProxyEvent,
-  Context,
-  APIGatewayProxyResult,
-} from "aws-lambda";
+// import chromium from "chrome-aws-lambda";
+// import {
+//   APIGatewayProxyEvent,
+//   Context,
+//   APIGatewayProxyResult,
+// } from "aws-lambda";
+type APIGatewayProxyResult = AWSLambda.APIGatewayProxyResult;
+const chromium = require("chrome-aws-lambda");
 
 const createChoiceSets = (array: string[]): string[][] => {
   let choiceSets = [];
