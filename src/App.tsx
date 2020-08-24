@@ -66,12 +66,12 @@ function App() {
   };
 
   const fetchQuestions = async () => {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Accept", "application/json");
     const options = {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        Accept: "application/json",
-      },
+      headers,
       body: JSON.stringify({ size: QUIZ_SIZE }),
     };
 
@@ -143,20 +143,22 @@ function App() {
       <Wrapper>
         <div className='App'>
           <h1>JS Quiz</h1>
-          {gameOver || userAnswers.length === QUIZ_SIZE ? !loading && questions ? 
-            <button
-              className='start'
-              onClick={() => questions && startTrivia(questions)}
-            >
-              Start
-            </button>
-           : null : null}
-          {!loading && !gameOver ? 
+          {gameOver || userAnswers.length === QUIZ_SIZE ? (
+            !loading && questions ? (
+              <button
+                className='start'
+                onClick={() => questions && startTrivia(questions)}
+              >
+                Start
+              </button>
+            ) : null
+          ) : null}
+          {!loading && !gameOver ? (
             <button className='start' onClick={restart}>
               Restart
-            </button> : null
-          }
-          
+            </button>
+          ) : null}
+
           {!gameOver ? (
             <h4 className='score'>
               Score: {score} / {QUIZ_SIZE}
