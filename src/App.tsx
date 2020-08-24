@@ -66,12 +66,12 @@ function App() {
   };
 
   const fetchQuestions = async () => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Accept", "application/json");
     const options = {
       method: "POST",
-      headers,
+      headers: {
+        "Content-Type": "application/json; charset=utf-8",
+        Accept: "application/json",
+      },
       body: JSON.stringify({ size: QUIZ_SIZE }),
     };
 
