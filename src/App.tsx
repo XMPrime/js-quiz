@@ -78,6 +78,7 @@ function App() {
     const questions = await (
       await fetch(
         "https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper"
+        // "http://localhost:8888/.netlify/functions/quiz-scraper"
       )
     ).json();
 
