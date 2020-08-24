@@ -1,13 +1,18 @@
 // import chromium from "chrome-aws-lambda";
-// import {
-//   APIGatewayProxyEvent,
-//   Context,
-//   APIGatewayProxyResult,
-// } from "aws-lambda";
+import {
+  APIGatewayProxyEvent,
+  Context,
+  APIGatewayProxyResult,
+} from "aws-lambda";
 // type APIGatewayProxyResult = AWSLambda.APIGatewayProxyResult;
 const chromium = require("chrome-aws-lambda");
 
-const createChoiceSets = (array) => {
+type textContent = { textContent: string }[];
+type nextElementSibling = {
+  nextElementSibling: { className: string; children: textContent };
+}[];
+
+const createChoiceSets = (array: string[]): string[][] => {
   let choiceSets = [];
   let set = [array[0]];
   for (let i = 1; i < array.length; i++) {
@@ -23,7 +28,7 @@ const createChoiceSets = (array) => {
   return choiceSets;
 };
 
-const createAnswerDetailSets = (array) => {
+const createAnswerDetailSets = (array: string[]): string[][] => {
   const regex = /^[0-9]{1,3}\.\s/;
   let answerSets = [];
   let set = [];
@@ -38,8 +43,9 @@ const createAnswerDetailSets = (array) => {
   }
   return answerSets;
 };
-// export const handler = async (): Promise<APIGatewayProxyResult> => {
-exports.handler = async () => {
+export const handler = async (): Promise<APIGatewayProxyResult> => {
+// exports.handler = async (): Promise<APIGatewayProxyResult> => {
+  
   const browser = await chromium.puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
@@ -49,11 +55,11 @@ exports.handler = async () => {
   const page = await browser.newPage();
   await page.goto("https://github.com/lydiahallie/javascript-questions/");
 
-  const questions = await page.$$eval("h6", (questions) =>
+  const questions = await page.$$eval("h6", (questions: textContent) =>
     questions.map((question) => question.textContent)
   );
 
-  const codeBlocks = await page.$$eval("h6", (blocks) =>
+  const codeBlocks = await page.$$eval("h6", (blocks: nextElementSibling) =>
     blocks.map((block) => {
       if (block.nextElementSibling.className.includes("highlight"))
         return block.nextElementSibling.children[0].textContent;
@@ -61,7 +67,7 @@ exports.handler = async () => {
     })
   );
 
-  const choices = await page.$$eval("ul > li", (choices) =>
+  const choices = await page.$$eval("ul > li", (choices: textContent) =>
     choices
       .map((choice) => {
         if (choice.textContent[1] === ":") return choice.textContent;
@@ -72,14 +78,16 @@ exports.handler = async () => {
 
   const choiceSets = createChoiceSets(choices);
 
-  const answers = await page.$$eval("details > h4", (answers) =>
+  const answers = await page.$$eval("details > h4", (answers: textContent) =>
     answers.map((answer) => answer.textContent[answer.textContent.length - 1])
   );
 
-  const answerDetails = await page.$$eval("details > p, h6", (details) =>
-    details
-      .map((detail) => detail.textContent)
-      .filter((detail) => detail.length >= 3)
+  const answerDetails = await page.$$eval(
+    "details > p, h6",
+    (details: textContent) =>
+      details
+        .map((detail) => detail.textContent)
+        .filter((detail) => detail.length >= 3)
   );
 
   const answerDetailSets = createAnswerDetailSets(answerDetails);
