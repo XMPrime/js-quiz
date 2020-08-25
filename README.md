@@ -12,6 +12,8 @@ Clone this repo to your desktop and go to its root directory and run npm install
 
 You will also need to install Netlify's CLI to run it locally.
 
-- npm install netlify-cli -g
+```bash
+npm install netlify-cli -g
+```
 
 Once the dependencies are installed, you can run npm start to start the application. You will then be able to access it at [http://localhost:8888](http://localhost:8888)
