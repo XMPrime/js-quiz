@@ -68,10 +68,9 @@ function App() {
   const fetchQuestions = async () => {
     const questions = await (
       await fetch(
-        "https://quiz-scraper.netlify.app/.netlify/functions/quiz-scraper"
+        "/.netlify/functions/quiz-scraper"
       )
     ).json();
-
     setQuestions(questions);
     setLoading(false);
   };
