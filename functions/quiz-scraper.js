@@ -43,7 +43,9 @@ exports.handler = async () => {
   await page.goto("https://github.com/lydiahallie/javascript-questions/");
 
   const questions = await page.$$eval("h6", (questions) =>
-    questions.map((question) => question.textContent)
+    questions.map((question) =>
+      question.textContent.replace(/^[0-9]{1,3}\.\s/g, "")
+    )
   );
 
   const codeBlocks = await page.$$eval("h6", (blocks) =>
