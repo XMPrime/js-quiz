@@ -132,8 +132,8 @@ function App() {
       <Wrapper>
         <div className='App'>
           <h1>JS Quiz</h1>
-          {gameOver || userAnswers.length === QUIZ_SIZE ? (
-            !loading && questions ? (
+          {!loading && questions ? (
+            gameOver || userAnswers.length === QUIZ_SIZE ? (
               <button
                 className='start'
                 onClick={() => questions && startTrivia(questions)}
